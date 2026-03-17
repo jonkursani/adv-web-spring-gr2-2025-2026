@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ErrorController {
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500 => General errors
+    // @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500 => General errors
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -26,7 +26,7 @@ public class ErrorController {
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND) // 404 => Not found errors
+    // @ResponseStatus(HttpStatus.NOT_FOUND) // 404 => Not found errors
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(ResourceNotFoundException ex) {
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -39,7 +39,7 @@ public class ErrorController {
 //        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400 => Validation errors
+    // @ResponseStatus(HttpStatus.BAD_REQUEST) // 400 => Validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> validationErrors = new HashMap<>();
