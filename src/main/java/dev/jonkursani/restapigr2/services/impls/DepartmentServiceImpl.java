@@ -2,6 +2,7 @@ package dev.jonkursani.restapigr2.services.impls;
 
 import dev.jonkursani.restapigr2.dtos.department.DepartmentDto;
 import dev.jonkursani.restapigr2.dtos.department.DepartmentRequest;
+import dev.jonkursani.restapigr2.dtos.department.DepartmentWithEmployeeCount;
 import dev.jonkursani.restapigr2.entities.Department;
 import dev.jonkursani.restapigr2.exceptions.department.DepartmentNotFoundException;
 import dev.jonkursani.restapigr2.mappers.DepartmentMapper;
@@ -48,7 +49,35 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentDto create(DepartmentRequest departmentRequest) {
-        return null;
+        var department = departmentMapper.toEntity(departmentRequest);
+        var createdDepartment = departmentRepository.save(department);
+        return departmentMapper.toDto(createdDepartment);
+    }
+
+    @Override
+    public DepartmentDto update(int id, DepartmentRequest departmentRequest) {
+        // validim a ekziston departamenti
+        var departmentFromDb = departmentRepository.findById(id)
+                .orElseThrow(() -> new DepartmentNotFoundException(id));
+
+        departmentMapper.updateEntityFromDto(departmentRequest, departmentFromDb);
+        var updatedDepartment = departmentRepository.save(departmentFromDb);
+        return departmentMapper.toDto(updatedDepartment);
+    }
+
+    @Override
+    public void delete(int id) {
+        // validimi => a ekziston dep qe po don me fshi
+        findById(id);
+        departmentRepository.deleteById(id);
+    }
+
+    @Override
+    public List<DepartmentWithEmployeeCount> findAllWithEmployeeCount() {
+        return departmentRepository.findAllWithEmployee()
+                .stream()
+                .map(departmentMapper::toDepartmentWithEmployeeCount)
+                .toList();
     }
 
     private DepartmentDto toDto(Department entity) {
