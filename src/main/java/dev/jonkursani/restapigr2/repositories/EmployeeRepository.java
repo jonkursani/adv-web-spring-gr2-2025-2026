@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findAllByDepartment(Department department);
+    boolean existsByEmail(String email);
 }

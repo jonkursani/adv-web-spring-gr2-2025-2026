@@ -4,6 +4,7 @@ import dev.jonkursani.restapigr2.dtos.department.DepartmentDto;
 import dev.jonkursani.restapigr2.dtos.department.DepartmentRequest;
 import dev.jonkursani.restapigr2.dtos.department.DepartmentWithEmployeeCount;
 import dev.jonkursani.restapigr2.entities.Department;
+import dev.jonkursani.restapigr2.exceptions.department.DepartmentHasEmployeesException;
 import dev.jonkursani.restapigr2.exceptions.department.DepartmentNotFoundException;
 import dev.jonkursani.restapigr2.mappers.DepartmentMapper;
 import dev.jonkursani.restapigr2.repositories.DepartmentRepository;
@@ -68,7 +69,15 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void delete(int id) {
         // validimi => a ekziston dep qe po don me fshi
-        findById(id);
+//        findById(id);
+        var department = departmentRepository.findById(id)
+                .orElseThrow(() -> new DepartmentNotFoundException(id));
+
+        if (department.getEmployees() != null && !department.getEmployees().isEmpty()) {
+            // 409 Conflict
+            throw new DepartmentHasEmployeesException(id);
+        }
+
         departmentRepository.deleteById(id);
     }
 

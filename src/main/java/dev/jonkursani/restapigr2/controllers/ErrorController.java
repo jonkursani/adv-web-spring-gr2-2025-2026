@@ -1,6 +1,7 @@
 package dev.jonkursani.restapigr2.controllers;
 
 import dev.jonkursani.restapigr2.dtos.ErrorResponse;
+import dev.jonkursani.restapigr2.exceptions.ConflictException;
 import dev.jonkursani.restapigr2.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,5 +55,16 @@ public class ErrorController {
                 .build();
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConflictException.class) // 409 => Conflict
+    public ResponseEntity<ErrorResponse> handleConflictException(ConflictException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .timeStamp(System.currentTimeMillis())
+                .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 }

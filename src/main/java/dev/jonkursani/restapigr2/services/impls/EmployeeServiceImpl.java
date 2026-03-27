@@ -2,7 +2,10 @@ package dev.jonkursani.restapigr2.services.impls;
 
 import dev.jonkursani.restapigr2.dtos.department.DepartmentDto;
 import dev.jonkursani.restapigr2.dtos.employee.EmployeeDto;
+import dev.jonkursani.restapigr2.dtos.employee.EmployeeRequest;
 import dev.jonkursani.restapigr2.entities.Department;
+import dev.jonkursani.restapigr2.exceptions.employee.EmployeeNotFoundException;
+import dev.jonkursani.restapigr2.exceptions.employee.EmployeeWithEmailAlreadyExistsException;
 import dev.jonkursani.restapigr2.mappers.DepartmentMapper;
 import dev.jonkursani.restapigr2.mappers.EmployeeMapper;
 import dev.jonkursani.restapigr2.repositories.EmployeeRepository;
@@ -39,5 +42,68 @@ public class EmployeeServiceImpl implements EmployeeService {
                     .map(employeeMapper::toDto)
                     .toList();
         }
+    }
+
+    @Override
+    public EmployeeDto findById(int id) {
+        return employeeRepository.findById(id)
+                .map(employeeMapper::toDto)
+                .orElseThrow(() -> new EmployeeNotFoundException(id));
+    }
+
+    @Override
+    public EmployeeDto create(EmployeeRequest employeeRequest) {
+        // a ekziston employee me email
+        if (employeeRepository.existsByEmail(employeeRequest.getEmail())) {
+            // 409 Conflict
+            throw new EmployeeWithEmailAlreadyExistsException(employeeRequest.getEmail());
+        }
+
+        // a ekziston departamenti
+        var departmentDto = departmentService.findById(employeeRequest.getDepartmentId());
+        var department = departmentMapper.toEntity(departmentDto);
+
+        var employee = employeeMapper.toEntity(employeeRequest);
+        employee.setDepartment(department);
+
+        var createdEmployee = employeeRepository.save(employee);
+        return employeeMapper.toDto(createdEmployee);
+    }
+
+    @Override
+    public EmployeeDto update(int id, EmployeeRequest employeeRequest) {
+        // a ekziston employee me id
+        var employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException(id));
+
+        // a ekziston employee me email
+//        if (!employee.getEmail().equalsIgnoreCase(employeeRequest.getEmail())) {
+//            if (employeeRepository.existsByEmail(employeeRequest.getEmail())) {
+//                // 409 Conflict
+//                throw new EmployeeWithEmailAlreadyExistsException(employeeRequest.getEmail());
+//            }
+//        }
+
+        if (!employee.getEmail().equalsIgnoreCase(employeeRequest.getEmail()) &&
+                employeeRepository.existsByEmail(employeeRequest.getEmail())) {
+            // 409 Conflict
+            throw new EmployeeWithEmailAlreadyExistsException(employeeRequest.getEmail());
+        }
+
+        // a ekziston departamenti
+        var departmentDto = departmentService.findById(employeeRequest.getDepartmentId());
+        var department = departmentMapper.toEntity(departmentDto);
+
+        employeeMapper.updateEntityFromDto(employeeRequest, employee);
+        employee.setDepartment(department);
+
+        var updatedEmployee = employeeRepository.save(employee);
+        return employeeMapper.toDto(updatedEmployee);
+    }
+
+    @Override
+    public void delete(int id) {
+        findById(id);
+        employeeRepository.deleteById(id);
     }
 }
