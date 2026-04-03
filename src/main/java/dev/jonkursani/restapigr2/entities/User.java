@@ -1,10 +1,7 @@
 package dev.jonkursani.restapigr2.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
@@ -12,6 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 // flyway migration prej properties te klases e krijon skripten e sql
 // enitity attribute from db => kolones ne tabele me kriju propertine
 public class User {
@@ -27,6 +25,10 @@ public class User {
 
     @Column(name = "password", length = 100, nullable = false)
     private String password;
+
+    @Column(name = "role", length = 50)
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(name = "is_active")
     private Boolean active;
