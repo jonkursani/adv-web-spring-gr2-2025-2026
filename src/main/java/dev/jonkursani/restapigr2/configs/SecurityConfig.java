@@ -51,17 +51,17 @@ public class SecurityConfig {
                         "/docs",
                         "/api/auth/**"
                 ).permitAll()
-                // hasRole() -> perdoret per 1 rol, hasAnyRole() -> perdoret per liste me role
-                .requestMatchers("/api/management/**").hasAnyRole(Role.ADMIN.name(), Role.MANAGER.name())
-                // hasAuthority() -> perdoret per 1 permission, hasAnyAuthority() -> perdoret per liste me permission
-                .requestMatchers(HttpMethod.GET, "/api/management/**")
-                    .hasAnyAuthority(Permission.ADMIN_READ.getPermission(), Permission.MANAGER_READ.getPermission())
-                .requestMatchers(HttpMethod.POST, "/api/management/**")
-                    .hasAnyAuthority(Permission.ADMIN_WRITE.getPermission(), Permission.MANAGER_WRITE.getPermission())
-                .requestMatchers(HttpMethod.PUT, "/api/management/**")
-                    .hasAnyAuthority(Permission.ADMIN_WRITE.getPermission(), Permission.MANAGER_WRITE.getPermission())
-                .requestMatchers(HttpMethod.DELETE, "/api/management/**")
-                    .hasAnyAuthority(Permission.ADMIN_WRITE.getPermission(), Permission.MANAGER_WRITE.getPermission())
+//                // hasRole() -> perdoret per 1 rol, hasAnyRole() -> perdoret per liste me role
+//                .requestMatchers("/api/management/**").hasAnyRole(Role.ADMIN.name(), Role.MANAGER.name())
+//                // hasAuthority() -> perdoret per 1 permission, hasAnyAuthority() -> perdoret per liste me permission
+//                .requestMatchers(HttpMethod.GET, "/api/management/**")
+//                    .hasAnyAuthority(Permission.ADMIN_READ.getPermission(), Permission.MANAGER_READ.getPermission())
+//                .requestMatchers(HttpMethod.POST, "/api/management/**")
+//                    .hasAnyAuthority(Permission.ADMIN_WRITE.getPermission(), Permission.MANAGER_WRITE.getPermission())
+//                .requestMatchers(HttpMethod.PUT, "/api/management/**")
+//                    .hasAnyAuthority(Permission.ADMIN_WRITE.getPermission(), Permission.MANAGER_WRITE.getPermission())
+//                .requestMatchers(HttpMethod.DELETE, "/api/management/**")
+//                    .hasAnyAuthority(Permission.ADMIN_WRITE.getPermission(), Permission.MANAGER_WRITE.getPermission())
 
                 .anyRequest().authenticated()
         );

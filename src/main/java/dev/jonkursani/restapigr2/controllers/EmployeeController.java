@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 public class EmployeeController {
     private final EmployeeService employeeService;
 
+    @PreAuthorize("hasAuthority('employee:read')")
     @GetMapping
     public ResponseEntity<List<EmployeeDto>> getEmployees(
             @RequestParam(required = false) Integer departmentId
@@ -43,6 +45,7 @@ public class EmployeeController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAuthority('employee:write')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Employee created"),
             @ApiResponse(responseCode = "400", description = "Validation error",
