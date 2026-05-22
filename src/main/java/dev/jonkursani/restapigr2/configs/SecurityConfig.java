@@ -69,6 +69,9 @@ public class SecurityConfig {
         // Disable CSRF token
         http.csrf(csrf -> csrf.disable());
 
+        // Cors config
+        http.cors(cors -> {});
+
         // Session management - stateless
         http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
