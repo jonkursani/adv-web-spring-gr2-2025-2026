@@ -1,5 +1,6 @@
 package dev.jonkursani.restapigr2.services.impls;
 
+import dev.jonkursani.restapigr2.security.AppUserDetails;
 import dev.jonkursani.restapigr2.services.AuthService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -41,7 +42,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = Map.of();
+        Map<String, Object> claims = Map.of(
+                "id", ((AppUserDetails) userDetails).getUser().getId(),
+                "name", ((AppUserDetails) userDetails).getUser().getName(),
+                "role", ((AppUserDetails) userDetails).getUser().getRole()
+        );
+
         return Jwts.builder()
                 .claims(claims)
                 .subject(userDetails.getUsername())
